@@ -1,39 +1,41 @@
 import {BrowserRouter,Route,Routes} from 'react-router-dom';
-import React from 'react';
-import SignUp from './pages/SignUp';
+import React, { useState} from 'react';
 import LogIn from './pages/LogIn';
 import Home from './pages/Home';
 import {ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Protected from './Protected';
+import ManageUserPage from './pages/ManageUserPage';
+import ManageCarParkPage from './pages/ManageCarParkPage';
 
 const App = () => {
+  const isAuthenticated = localStorage.getItem('token') !== null;
+
   return (
-    // <div className="App">
-    //   <header className="App-header">
-    //     <p>
-    //       Edit <code>src/App.js</code> and save to reload.
-    //     </p>
-    //     <a
-    //       className="App-link"
-    //       href="https://reactjs.org"
-    //       target="_blank"
-    //       rel="noopener noreferrer"
-    //     >
-    //       Learn React
-    //     </a>
-    //   </header>
-    // </div>
 <div className="App">
     <ToastContainer />
 <BrowserRouter>
 <Routes>
-  <Route path="/" exact element={<LogIn />} />
-  <Route path="/sign-up" exact element={<SignUp />} />
-  <Route path="/home" exact element={<Home />} />
-  <Route path="/*" element={<LogIn />}/>
+<Route path="/*" exact element={<LogIn />} />
+  <Route path="/home" element={
+              <Protected isAuthenticated={isAuthenticated}>
+                <Home />
+              </Protected>
+            }/>
+  <Route path="/manage-user" exact element={
+              <Protected isAuthenticated={isAuthenticated}>
+                <ManageUserPage />
+              </Protected>
+            }/>
+  <Route path="/manage-carpark" element={ 
+  <Protected isAuthenticated={isAuthenticated}>
+    <ManageCarParkPage />   
+    </Protected>
+            }/>
+
 </Routes>
 
-</BrowserRouter>
+</BrowserRouter> 
 </div>
   );
 

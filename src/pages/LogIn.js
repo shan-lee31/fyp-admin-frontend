@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import {Box,Text,Heading,VStack,FormControl,Input,Link,Button,HStack,Center,NativeBaseProvider,Pressable,Icon} from "native-base";
+import {Box,Text,Heading,VStack,FormControl,Input,Link,Button,HStack,Center,NativeBaseProvider,Pressable,Icon,useColorMode,Image} from "native-base";
 import ReCAPTCHA from "react-google-recaptcha";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"
+import img from "../assets/logo.png"
+import './page.css'
 
 const LogIn = () => {
 
@@ -15,6 +17,8 @@ const LogIn = () => {
     email: "",
     password: "",
   });
+
+
   const navigate = useNavigate()
 
   const submit = async(e) => {
@@ -29,8 +33,12 @@ const LogIn = () => {
       .then(res =>{
         if (res.data.message == "LoginPass"){
           localStorage.setItem('token', res.data.token);
-          toast.success("Successfully Login")
-          navigate('/home')
+          localStorage.setItem('username',res.data.username);
+          navigate("/home")
+          setTimeout(() => {
+            toast.success("Successfully Login")
+          }, 500);
+          //  window.location.reload(); 
         }
         else if (res.data == "No user"){
           toast.error("Email is not registered.")
@@ -54,42 +62,35 @@ const LogIn = () => {
   }
 
   return (
-    <Center w="100%">
-      <Box safeArea p="2" py="8" w="90%" maxW="290">
-        <Heading
-          size="lg"
-          fontWeight="600"
-          color="coolGray.800"
-          _dark={{
-            color: "warmGray.50",
-          }}
-        >
-          Welcome
-        </Heading>
+    <Center w="100%" backgroundColor="#003572" p="0" h="100%">
+      <Box safeArea p="2" py="8" w="90%" maxW="290" height="100%">
+        <VStack space={6} mt="5" justifyContent="center" alignItems="center" >
+        <Image source={{ uri: img }} size="2xl" maxWidth={1200} maxHeight={150} alt="logo"/>
         <Heading
           mt="1"
           _dark={{
             color: "warmGray.200",
           }}
-          color="coolGray.600"
+          color="#F79520"
           fontWeight="medium"
-          size="xs"
+          size="ml"
+          marginBottom="5"
         >
-          Sign in to continue!
+          Adminstrator
         </Heading>
-
-        <VStack space={3} mt="5">
         <form action="POST" method="/login">
-          <FormControl isRequired>
-            <FormControl.Label>Email ID</FormControl.Label>
+          <FormControl isRequired  >
+            <FormControl.Label >Email ID</FormControl.Label>
             <Input
+             style={{ color: '#ffffff' }}
               placeholder="example@email.com"
               onChangeText={(value) => setForm({ ...form, email: value })}
             />
           </FormControl>
           <FormControl isRequired>
-            <FormControl.Label>Password</FormControl.Label>
+            <FormControl.Label  style={{ color: '#ffffff' }}>Password</FormControl.Label>
             <Input
+             style={{ color: '#ffffff' }}
               type={show ? "text" : "password"} onChangeText={value => setForm({...form, password:value})}
               InputRightElement={
                 <Pressable onPress={() => setShow(!show)}>
@@ -117,27 +118,6 @@ const LogIn = () => {
             Sign in
           </Button>
           </form>
-          <HStack mt="6" justifyContent="center">
-            <Text
-              fontSize="sm"
-              color="coolGray.600"
-              _dark={{
-                color: "warmGray.200",
-              }}
-            >
-              I'm a new user.{" "}
-            </Text>
-            <Link
-              _text={{
-                color: "indigo.500",
-                fontWeight: "medium",
-                fontSize: "sm",
-              }}
-              href="/sign-up"
-            >
-              Sign Up
-            </Link>
-          </HStack>
         </VStack>
       </Box>
     </Center>
@@ -149,7 +129,7 @@ const LogIn = () => {
 export default () => {
   return (
     <NativeBaseProvider>
-      <Center flex={1} px="3">
+      <Center flex={1} >
         <LogIn />
       </Center>
     </NativeBaseProvider>
