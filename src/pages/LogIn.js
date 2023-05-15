@@ -11,7 +11,7 @@ import './page.css'
 
 const LogIn = () => {
 
-  const [captchaVal, setCaptchaVal] = useState(null)
+  // const [captchaVal, setCaptchaVal] = useState(null)
   const [show, setShow] = useState(false);
   const [form, setForm] = useState({
     email: "",
@@ -23,19 +23,19 @@ const LogIn = () => {
 
   const submit = async(e) => {
     try{
-      if (!captchaVal){
-        toast.error("Fill in the captcha!")
-      }
-    else{
+    //   if (!captchaVal){
+    //     toast.error("Fill in the captcha!")
+    //   }
+    // else{
       await axios.post("http://localhost:8000/login",{
         form
       })
       .then(res =>{
         if (res.data.message == "LoginPass"){
+          navigate("/home")
           localStorage.setItem('token', res.data.token);
           localStorage.setItem('username',res.data.username);
-          navigate("/home")
-            toast.success("Successfully Login")
+          toast.success("Successfully Login")
         }
         else if (res.data == "No user"){
           toast.error("Email is not registered.")
@@ -51,7 +51,6 @@ const LogIn = () => {
         console.log(e)
         toast.error("Someting went wrong!");
       })
-    }
   }
     catch(e){
       console.log(e)
@@ -110,7 +109,7 @@ const LogIn = () => {
               Forgot Password?
             </Link>
           </FormControl>
-          <ReCAPTCHA sitekey="6LeAqu4lAAAAADgeUFQnHmYJhNtX18-M0WlABUr9" onChange={(value)=>{setCaptchaVal(value)}} />
+          {/* <ReCAPTCHA sitekey="6LeAqu4lAAAAADgeUFQnHmYJhNtX18-M0WlABUr9" onChange={(value)=>{setCaptchaVal(value)}} /> */}
           <Button mt="2" colorScheme="indigo" onPress={submit}>
             Sign in
           </Button>

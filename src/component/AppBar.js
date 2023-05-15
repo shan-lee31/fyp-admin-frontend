@@ -19,9 +19,9 @@ const AppBar = () => {
     const setLogOut = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
-        localStorage.removeItem("_grecaptcha");
+        // localStorage.removeItem("_grecaptcha");
         navigate("/");
-        window.location.reload(); 
+        window.location.reload(true); 
         toast.success("Successfully Logout");
     }
 
@@ -31,7 +31,7 @@ const AppBar = () => {
             <Image source={{ uri: img }} width="100" height="50" alt="logo" onPress="/home"/>
             <Heading mt="1" color="#F79520" fontWeight="medium" size="ml" marginLeft="5"> Adminstrator </Heading>
         </HStack>
-        <Pressable onHoverIn={() => setHover(!isHover)} onHoverOut={() => setHover(isHover)}>
+        <Pressable onHoverIn={() => setHover(!isHover)} onHoverOut={() => setHover(isHover)} onPress={() => setHover(!isHover)}>
         <HStack alignItems="center"  bg={isHover ? "red.100" : ""} p="5" rounded="2" minWidth="100px">
         <FontAwesomeIcon icon={faUser} size="lg" color={isHover ? "black" : "white"} />
         <Text fontSize="15" color={isHover ? "black" : "white"} marginLeft="5">{username}</Text> 
