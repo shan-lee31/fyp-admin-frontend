@@ -7,10 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 import Protected from "./utils/ProtectedRoute";
 import ManageUserPage from "./pages/ManageUserPage";
 import ManageCarParkPage from "./pages/ManageCarParkPage";
-const App = () => {
-  const isAuthenticated = localStorage.getItem("username") ? true : false;
-  console.log("in App",isAuthenticated)
 
+const App = () => {
   return (
     <div className="App">
       <ToastContainer />
@@ -18,9 +16,9 @@ const App = () => {
         <Routes>
           <Route path="/" exact element={<LogIn />} />
           <Route
-            path="home" 
+            path="/home"
             element={
-              <Protected isAuthenticated={isAuthenticated}>
+              <Protected isAuthenticated>
                 <Home />
               </Protected>
             }

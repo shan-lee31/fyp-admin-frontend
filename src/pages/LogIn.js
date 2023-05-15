@@ -32,10 +32,10 @@ const LogIn = () => {
       })
       .then(res =>{
         if (res.data.message == "LoginPass"){
-          navigate("/home")
           localStorage.setItem('token', res.data.token);
           localStorage.setItem('username',res.data.username);
-          toast.success("Successfully Login")
+          navigate("/home")
+            toast.success("Successfully Login")
         }
         else if (res.data == "No user"){
           toast.error("Email is not registered.")
@@ -51,7 +51,7 @@ const LogIn = () => {
         console.log(e)
         toast.error("Someting went wrong!");
       })
-  }
+    }
     catch(e){
       console.log(e)
     }
