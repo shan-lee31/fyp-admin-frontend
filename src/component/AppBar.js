@@ -19,7 +19,9 @@ const AppBar = () => {
     const setLogOut = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
+        localStorage.removeItem("_grecaptcha");
         navigate("/");
+        window.location.reload(); 
         toast.success("Successfully Logout");
     }
 

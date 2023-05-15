@@ -35,10 +35,7 @@ const LogIn = () => {
           localStorage.setItem('token', res.data.token);
           localStorage.setItem('username',res.data.username);
           navigate("/home")
-          setTimeout(() => {
             toast.success("Successfully Login")
-          }, 500);
-          //  window.location.reload(); 
         }
         else if (res.data == "No user"){
           toast.error("Email is not registered.")
