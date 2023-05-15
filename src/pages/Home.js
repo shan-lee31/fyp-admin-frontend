@@ -2,7 +2,7 @@ import React from "react";
 import AppBar from "../component/AppBar"
 import LeftMenu from "../component/LeftMenu";
 import {Box,Text,Heading,VStack,FormControl,Input,Link,Button,HStack,Center,NativeBaseProvider,Flex} from "native-base";
-
+import { Route, Navigate, Routes } from 'react-router-dom';
 
 const Home = () => {
  return (

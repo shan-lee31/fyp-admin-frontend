@@ -8,16 +8,19 @@ import Protected from "./utils/ProtectedRoute";
 import ManageUserPage from "./pages/ManageUserPage";
 import ManageCarParkPage from "./pages/ManageCarParkPage";
 const App = () => {
+  const isAuthenticated = localStorage.getItem("username") ? true : false;
+  console.log("in App",isAuthenticated)
+
   return (
     <div className="App">
       <ToastContainer />
       <BrowserRouter>
         <Routes>
-          <Route path="/*" element={<LogIn />} />
+          <Route path="/" exact element={<LogIn />} />
           <Route
-            path="/home"
+            path="home" 
             element={
-              <Protected isAuthenticated>
+              <Protected isAuthenticated={isAuthenticated}>
                 <Home />
               </Protected>
             }

@@ -21,7 +21,6 @@ const AppBar = () => {
         localStorage.removeItem("username");
         // localStorage.removeItem("_grecaptcha");
         navigate("/");
-        window.location.reload(true); 
         toast.success("Successfully Logout");
     }
 
