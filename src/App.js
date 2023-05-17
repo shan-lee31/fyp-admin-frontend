@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Protected from "./utils/ProtectedRoute";
 import ManageUserPage from "./pages/ManageUserPage";
 import ManageCarParkPage from "./pages/ManageCarParkPage";
+import SignUp from "./pages/SignUp";
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" exact element={<LogIn />} />
+          <Route path="/sign-up" element={<SignUp/>} />
           <Route
             path="/home"
             element={

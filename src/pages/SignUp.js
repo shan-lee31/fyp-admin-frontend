@@ -26,9 +26,9 @@ const SignUp = () => {
      else if (form.password != form.cpassword){
         toast.error("Passwords do not match!")
       }
-      else if(!captchaVal){
-        toast.error("Fill the captcha!")
-      }
+      // else if(!captchaVal){
+      //   toast.error("Fill the captcha!")
+      // }
       else{
         await axios.post("http://localhost:8000/sign-up",{
           form

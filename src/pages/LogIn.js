@@ -32,8 +32,8 @@ const LogIn = () => {
       })
       .then(res =>{
         if (res.data.message == "LoginPass"){
-          localStorage.setItem('token', res.data.token);
           localStorage.setItem('username',res.data.username);
+          localStorage.setItem('level',res.data.level);
           navigate("/home")
             toast.success("Successfully Login")
         }
