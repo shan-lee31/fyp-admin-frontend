@@ -16,13 +16,13 @@ import {
   Flex,
   Icon,
   Divider,
-  View,
-  Table, Thead, Tbody, Tr, Th, Td
 } from "native-base";
 
 const ManageCarParkPage = () => {
   const [buildings, setBuildings] = useState([]);
   var itemCount = 0;
+
+  const titles = ["No","Name", "Address", "Capacity","Available Space"];
 
   useEffect(() => {
     fetchData();
@@ -33,7 +33,7 @@ const ManageCarParkPage = () => {
       const response = await fetch("http://localhost:8000/carparkbuilding");
       const data = await response.json();
       setBuildings(data);
-      itemCount = data.length
+      itemCount = data.length;
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -55,25 +55,26 @@ const ManageCarParkPage = () => {
           <LeftMenu />
         </Box>
         <Box flex={1} p="6" minHeight="500px">
-        {/* <VStack divider={<Divider />}>
-            
-              <HStack >
-              <Text color="white"> Name  </Text>
-              <Text color="white"> Address  </Text>
-              <Text color="white"> Capacity  </Text>
-              </HStack>
-          </VStack> */}
-          <VStack divider={<Divider />} space={2}>
-            <HStack >
-              <Text color="white" w="200"> Name  </Text>
-              <Text color="white"  w="200"> Address  </Text>
-              <Text color="white"  w="200"> Capacity  </Text>
+          <VStack divider={<Divider />} borderBottomWidth={1} borderColor="white" space={3}>
+            <HStack>
+              {titles.map((title, index) => (
+                <HStack key={index} flex={1}>
+                  <Text color="white" flexWrap="wrap">{title}</Text>
+                </HStack>
+              ))}
             </HStack>
-            {buildings.map((building) => (
-              <HStack >
-              <Text color="white" key={building._id}>{building.name} {building.address} {building.capacity}   </Text>
-              </HStack>
-            ))}
+
+            <VStack divider={<Divider />} space={3} alignContent="center">
+              {buildings.map((building,index) => (
+                <HStack key={building._id} alignItems="center" >
+                  <Text color="white" flex="auto">{index + 1}</Text>
+                  <Text color="white" flex={1}>{building.name}</Text>
+                  <Text color="white" flex={1}>{building.address}</Text>
+                  <Text color="white" flex={1}>{building.capacity}</Text>
+                  <Text color="white" flex={1}>{building.availableSpace}</Text>
+                </HStack>
+              ))}
+            </VStack>
           </VStack>
         </Box>
       </Flex>
