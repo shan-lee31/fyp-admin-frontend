@@ -8,10 +8,11 @@ import Protected from "./utils/ProtectedRoute";
 import ManageUserPage from "./pages/ManageUserPage";
 import ManageCarParkPage from "./pages/ManageCarParkPage";
 import SignUp from "./pages/SignUp";
+import AddCarParkBuilding from "./pages/addCarParkBuilding";
 
 const App = () => {
   return (
-    <div className="App">
+    <div className="App" style={{backgroundColor:"#003572", height:"100%"}}>
       <ToastContainer />
       <BrowserRouter>
         <Routes>
@@ -39,6 +40,14 @@ const App = () => {
             element={
               <Protected isAuthenticated>
                 <ManageCarParkPage />
+              </Protected>
+            }
+          />
+           <Route
+            path="/manage-carpark/add"
+            element={
+              <Protected isAuthenticated>
+                <AddCarParkBuilding />
               </Protected>
             }
           />

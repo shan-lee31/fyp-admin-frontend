@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import AppBar from "../component/AppBar";
+import { useNavigate } from "react-router-dom";
+import {ToastContainer, toast } from 'react-toastify';
+import axios from "axios";
 import LeftMenu from "../component/LeftMenu";
 import {
   Box,
@@ -16,29 +19,101 @@ import {
   Flex,
   Icon,
   Divider,
+  Pressable,
+  Modal,
 } from "native-base";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { BrowserRouter as Router, Switch, Route, Link2 as Link } from 'react-router-dom';
+import { faAdd } from "@fortawesome/free-solid-svg-icons";
 
 const ManageCarParkPage = () => {
+  const navigate = useNavigate();
   const [buildings, setBuildings] = useState([]);
+  const [isHover, setHover] = useState(false);
   var itemCount = 0;
 
-  const titles = ["No","Name", "Address", "Capacity","Available Space"];
+  const titles = ["No", "Name", "Capacity", "Actions"];
+  const maxTitleWidth = Math.max(...titles.map((title) => title.length));
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+  const styles = {
+    top: {
+      marginBottom: "auto",
+      marginTop: 0,
+    },
+    bottom: {
+      marginBottom: 0,
+      marginTop: "auto",
+    },
+    left: {
+      marginLeft: 0,
+      marginRight: "auto",
+    },
+    right: {
+      marginLeft: "auto",
+      marginRight: 0,
+    },
+    center: {},
+  };
+  const [placement, setPlacement] = useState(undefined);
+  const [open, setOpen] = useState(false);
+  const [buildingItem, setBuildingItem] = useState();
 
+  const [updateInfo,setupdateInfo] = useState({
+    name:"",
+    plusCode:"",
+    Capacity:"",
+
+  })
+
+  const openModal = (placement, buildingItem) => {
+    setOpen(true);
+    setPlacement(placement);
+    setBuildingItem(buildingItem);
+  };
+  const handleEditInfo = async(e) => {
+    try{
+      await axios.post("http://localhost:8000/updateCarParkInfo",{
+        updateInfo
+      })
+      .then(res =>{
+        if (res.data.message == "updateCarParkSuccess"){
+          setOpen(false)
+          navigate("/manage-carpark")
+          toast.success("Successfully Update Car Park info")
+        }
+      })
+      .catch(e => {
+        console.log(e)
+        toast.error("Someting went wrong!");
+      })
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:8000/carparkbuilding");
+  //     const data = await response.json();
+  //     setBuildings(data);
+  //     itemCount = data.length;
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //   }
+  // };
   useEffect(() => {
-    fetchData();
+    axios.get('http://localhost:8000/carparkbuilding')
+      .then(response => {
+        setBuildings(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/carparkbuilding");
-      const data = await response.json();
-      setBuildings(data);
-      itemCount = data.length;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
+  console.log(buildings);
   return (
     <Center w="100%" backgroundColor="#003572">
       <AppBar />
@@ -55,27 +130,127 @@ const ManageCarParkPage = () => {
           <LeftMenu />
         </Box>
         <Box flex={1} p="6" minHeight="500px">
-          <VStack divider={<Divider />} borderBottomWidth={1} borderColor="white" space={3}>
-            <HStack>
+          <VStack divider={<Divider />} borderColor="white" space={3}>
+            <HStack alignContent="left">
               {titles.map((title, index) => (
-                <HStack key={index} flex={1}>
-                  <Text color="white" flexWrap="wrap">{title}</Text>
-                </HStack>
+                <Text
+                  key={index}
+                  color="white"
+                  flexWrap="wrap"
+                  justifyContent="space-between"
+                  flex={1}
+                >
+                  {title}
+                </Text>
               ))}
             </HStack>
 
-            <VStack divider={<Divider />} space={3} alignContent="center">
-              {buildings.map((building,index) => (
-                <HStack key={building._id} alignItems="center" >
-                  <Text color="white" flex="auto">{index + 1}</Text>
-                  <Text color="white" flex={1}>{building.name}</Text>
-                  <Text color="white" flex={1}>{building.address}</Text>
-                  <Text color="white" flex={1}>{building.capacity}</Text>
-                  <Text color="white" flex={1}>{building.availableSpace}</Text>
+            <VStack divider={<Divider />} space={3}>
+              {buildings.map((building, index) => (
+                <HStack key={building._id}>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {index + 1}
+                  </Text>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {building.name}
+                  </Text>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {building.capacity}
+                  </Text>
+                  <HStack justifyContent="space-between" flex={1}>
+                    <Link
+                      style={{ cursor: "pointer" }}
+                      onPress={() => openModal("center", index)}
+                      _text={{
+                        color: "#F79520",
+                        fontWeight: "medium",
+                        fontSize: "sm",
+                      }}
+                    >
+                      Edit
+                    </Link>
+                    <Text color="white"> | </Text>
+                    <Link
+                      _text={{
+                        color: "red.300",
+                        fontWeight: "medium",
+                        fontSize: "sm",
+                      }}
+                      href="#"
+                    >
+                      Delete
+                    </Link>
+                  </HStack>
                 </HStack>
               ))}
             </VStack>
+            <VStack alignItems={"flex-end"}>
+              <Pressable
+                onHoverIn={() => setHover(isHover)}
+                onHoverOut={() => setHover(!isHover)}
+              >
+                <Link href="/manage-carpark/add">
+                  <Button bg={isHover ? "white" : "#F79520"}>
+                    <HStack alignItems="center" rounded="2">
+                      <FontAwesomeIcon icon={faAdd} size="sm" color="black" />
+                      <Text fontSize="12" color="black" marginLeft="5">
+                        Add
+                      </Text>
+                    </HStack>
+                  </Button>
+                </Link>
+              </Pressable>
+            </VStack>
           </VStack>
+          <Modal
+                isOpen={open}
+                onClose={() => setOpen(false)}
+                safeAreaTop={true}
+              >
+                <Modal.Content maxWidth="350" {...styles[placement]}>
+                  <Modal.CloseButton />
+                  <Modal.Header>Edit Info</Modal.Header>
+                  <Modal.Body>
+                    <Text></Text>
+                    <FormControl>
+                      <FormControl.Label>Name</FormControl.Label>
+                      <Input
+                        placeholder={JSON.stringify(buildings[buildingItem].address)}
+                      />
+                    </FormControl>
+                    <FormControl mt="3">
+                      <FormControl.Label>Google Plus Code</FormControl.Label>
+                      <Input
+                        placeholder={JSON.stringify(buildings[buildingItem])}
+                      />
+                    </FormControl>
+                    <FormControl mt="3">
+                      <FormControl.Label>Capacity</FormControl.Label>
+                      <Input
+                        placeholder={JSON.stringify(buildings[buildingItem])}
+                      />
+                    </FormControl>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button.Group space={2}>
+                      <Button
+                        variant="ghost"
+                        colorScheme="blueGray"
+                        onPress={() => {
+                          setOpen(false);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onPress={handleEditInfo}
+                      >
+                        Save
+                      </Button>
+                    </Button.Group>
+                  </Modal.Footer>
+                </Modal.Content>
+              </Modal>
         </Box>
       </Flex>
     </Center>

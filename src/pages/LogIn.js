@@ -76,7 +76,7 @@ const LogIn = () => {
         </Heading>
         <form action="POST" method="/login">
           <FormControl isRequired  >
-            <FormControl.Label >Email ID</FormControl.Label>
+            <FormControl.Label mb={2} >Email ID</FormControl.Label>
             <Input
              style={{ color: '#ffffff' }}
               placeholder="example@email.com"
@@ -84,7 +84,7 @@ const LogIn = () => {
             />
           </FormControl>
           <FormControl isRequired>
-            <FormControl.Label  style={{ color: '#ffffff' }}>Password</FormControl.Label>
+            <FormControl.Label mt={5} mb={2}>Password</FormControl.Label>
             <Input
              style={{ color: '#ffffff' }}
               type={show ? "text" : "password"} onChangeText={value => setForm({...form, password:value})}
@@ -97,7 +97,7 @@ const LogIn = () => {
               placeholder="Password"
             />
 
-            <Link
+            {/* <Link
               _text={{
                 fontSize: "xs",
                 fontWeight: "500",
@@ -107,10 +107,10 @@ const LogIn = () => {
               mt="1"
             >
               Forgot Password?
-            </Link>
+            </Link> */}
           </FormControl>
           {/* <ReCAPTCHA sitekey="6LeAqu4lAAAAADgeUFQnHmYJhNtX18-M0WlABUr9" onChange={(value)=>{setCaptchaVal(value)}} /> */}
-          <Button mt="2" colorScheme="indigo" onPress={submit}>
+          <Button mt="10" mb={50} colorScheme="indigo" onPress={submit}>
             Sign in
           </Button>
           </form>

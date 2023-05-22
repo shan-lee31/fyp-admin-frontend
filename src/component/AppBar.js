@@ -17,7 +17,7 @@ const AppBar = () => {
 
 
     const setLogOut = () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem("level");
         localStorage.removeItem("username");
         // localStorage.removeItem("_grecaptcha");
         navigate("/");
