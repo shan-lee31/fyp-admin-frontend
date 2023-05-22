@@ -30,13 +30,9 @@ const ManageCarParkPage = () => {
   const navigate = useNavigate();
   const [buildings, setBuildings] = useState([]);
   const [isHover, setHover] = useState(false);
-  var itemCount = 0;
 
   const titles = ["No", "Name", "Capacity", "Actions"];
-  const maxTitleWidth = Math.max(...titles.map((title) => title.length));
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
+
   const styles = {
     top: {
       marginBottom: "auto",
@@ -58,12 +54,10 @@ const ManageCarParkPage = () => {
   };
   const [placement, setPlacement] = useState(undefined);
   const [open, setOpen] = useState(false);
-  const [buildingItem, setBuildingItem] = useState();
-
-  const [updateInfo,setupdateInfo] = useState({
+  const [buildingItem, setBuildingItem] = useState({});
+  const [updateInfo,setUpdateInfo] = useState({
     name:"",
-    plusCode:"",
-    Capacity:"",
+    capacity:"",
 
   })
 
@@ -71,6 +65,7 @@ const ManageCarParkPage = () => {
     setOpen(true);
     setPlacement(placement);
     setBuildingItem(buildingItem);
+    setUpdateInfo({name:buildingItem.name,capacity:buildingItem.capacity})
   };
   const handleEditInfo = async(e) => {
     try{
@@ -79,6 +74,7 @@ const ManageCarParkPage = () => {
       })
       .then(res =>{
         if (res.data.message == "updateCarParkSuccess"){
+          console.log("can save")
           setOpen(false)
           navigate("/manage-carpark")
           toast.success("Successfully Update Car Park info")
@@ -93,16 +89,7 @@ const ManageCarParkPage = () => {
       console.log(e)
     }
   }
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await fetch("http://localhost:8000/carparkbuilding");
-  //     const data = await response.json();
-  //     setBuildings(data);
-  //     itemCount = data.length;
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
+
   useEffect(() => {
     axios.get('http://localhost:8000/carparkbuilding')
       .then(response => {
@@ -114,6 +101,7 @@ const ManageCarParkPage = () => {
   }, []);
 
   console.log(buildings);
+
   return (
     <Center w="100%" backgroundColor="#003572">
       <AppBar />
@@ -160,7 +148,7 @@ const ManageCarParkPage = () => {
                   <HStack justifyContent="space-between" flex={1}>
                     <Link
                       style={{ cursor: "pointer" }}
-                      onPress={() => openModal("center", index)}
+                      onPress={() => openModal("center", building)}
                       _text={{
                         color: "#F79520",
                         fontWeight: "medium",
@@ -211,25 +199,25 @@ const ManageCarParkPage = () => {
                   <Modal.CloseButton />
                   <Modal.Header>Edit Info</Modal.Header>
                   <Modal.Body>
-                    <Text></Text>
+                    <form action="POST" method="/updateInfo">
                     <FormControl>
                       <FormControl.Label>Name</FormControl.Label>
-                      <Input
-                        placeholder={JSON.stringify(buildings[buildingItem].address)}
+                      <Input value={updateInfo.name || buildingItem.name} onChangeText={value => setUpdateInfo({...buildingItem.name, name:value})}
                       />
                     </FormControl>
-                    <FormControl mt="3">
+                    {/* <FormControl mt="3" >
                       <FormControl.Label>Google Plus Code</FormControl.Label>
-                      <Input
-                        placeholder={JSON.stringify(buildings[buildingItem])}
+                      <Input isDisabled onChangeText={value => setupdateInfo({...buildingItem.address, address:value})}
+                        value={buildingItem.address }
                       />
-                    </FormControl>
-                    <FormControl mt="3">
+                    </FormControl> */}
+                    <FormControl mt="3" >
                       <FormControl.Label>Capacity</FormControl.Label>
-                      <Input
-                        placeholder={JSON.stringify(buildings[buildingItem])}
+                      <Input type="text" value={updateInfo.capacity || buildingItem.capacity}
+                         onChangeText={value => setUpdateInfo({...buildingItem.capacity, capacity:value})}
                       />
                     </FormControl>
+                    </form>
                   </Modal.Body>
                   <Modal.Footer>
                     <Button.Group space={2}>
@@ -250,6 +238,7 @@ const ManageCarParkPage = () => {
                     </Button.Group>
                   </Modal.Footer>
                 </Modal.Content>
+                
               </Modal>
         </Box>
       </Flex>
