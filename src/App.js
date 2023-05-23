@@ -9,6 +9,8 @@ import ManageUserPage from "./pages/ManageUserPage";
 import ManageCarParkPage from "./pages/ManageCarParkPage";
 import SignUp from "./pages/SignUp";
 import AddCarParkBuilding from "./pages/addCarParkBuilding";
+import AddAdmin from "./pages/addAdmin";
+import ManageReservation from "./pages/ManageReservation";
 
 const App = () => {
   return (
@@ -35,11 +37,28 @@ const App = () => {
               </Protected>
             }
           />
+           <Route
+            path="/manage-user/add"
+            exact
+            element={
+              <Protected isAuthenticated>
+                <AddAdmin />
+              </Protected>
+            }
+          />
           <Route
             path="/manage-carpark"
             element={
               <Protected isAuthenticated>
                 <ManageCarParkPage />
+              </Protected>
+            }
+          />
+              <Route
+            path="/manage-reservation"
+            element={
+              <Protected isAuthenticated>
+                <ManageReservation />
               </Protected>
             }
           />

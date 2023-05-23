@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Text,
@@ -13,25 +14,40 @@ import {
   Center,
   NativeBaseProvider,
   Flex,
+  useNativeBase,
 } from "native-base";
 import AppBar from "../component/AppBar";
 import LeftMenu from "../component/LeftMenu";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const AddCarPark = () => {
-  const [form, setForm] = useState({
+  const navigate = useNavigate();
+  const [addForm, setAddForm] = useState({
     name: "",
-    plusCode: "",
+    googlePlusCode: "",
     capacity: "",
   });
 
   const submit = async (e) => {
     e.preventDefault();
     try {
-      if (true) {
-        toast.success("can submit");
-      } else {
-        toast.error("error");
+      if (addForm.capacity.length == 0 || null ) {
+        toast.error("Please enter value for capacity.")
+      } 
+      else{
+        await axios.post("http://localhost:8000/addBuilding",{
+          addForm
+        })
+        .then(res=>{
+          if(res.data == "exist"){
+            toast.error("Duplicated Car Park")
+          }
+          else if (res.data="Not Exist"){
+            toast.success("Successfully added a new car park building!")
+            navigate("/manage-carpark")
+          }
+        })
       }
     } catch (e) {
       console.log(e);
@@ -61,14 +77,14 @@ const AddCarPark = () => {
                   Car Park Building Name
                 </Text>
                 <Input color="white"
-                  onChangeText={(value) => setForm({ ...form, name: value })}
+                  onChangeText={(value) => setAddForm({ ...addForm, name: value })}
                 />
               </FormControl>
               <br></br>
               <FormControl isRequired>
                 <Text color="white" style={{ marginBottom: 2 }}>Google Plus Code</Text>
                 <Input color="white"
-                  onChangeText={(value) => setForm({ ...form, plusCode: value })}
+                  onChangeText={(value) => setAddForm({ ...addForm, googlePlusCode: value })}
                 />
               </FormControl>
               <br></br>
@@ -76,17 +92,13 @@ const AddCarPark = () => {
               <Text color="white" style={{ marginBottom: 2 }}>Capacity</Text>
                 <Input color="white"
                   onChangeText={(value) =>
-                    setForm({ ...form, capacity: value })
+                    setAddForm({ ...addForm, capacity: value })
                   }
                 />
               </FormControl>
-              {/* <FormControl isRequired>
-            <FormControl.Label>Confirm Password</FormControl.Label>
-            <Input onChangeText={value => setForm({...form, cpassword:value})}/>
-          </FormControl> */}
               <br></br>
               <Button mt="2" colorScheme="indigo" onPress={submit}>
-                Add
+                Add Building
               </Button>
             </form>
           </VStack>
@@ -95,8 +107,6 @@ const AddCarPark = () => {
     </Center>
   );
 };
-
-// export default User;
 
 export default () => {
   return (

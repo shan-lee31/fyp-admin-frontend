@@ -14,7 +14,10 @@ const styles = {
         <Link to="/home" style={styles}>Home</Link>
       </Box>
       <Box bg="blue.400" p={2}>
-        <Link to="/manage-carpark" style={styles}>Manage Car Park</Link>
+        <Link to="/manage-reservation" style={styles}>Manage Parking Lot Reservation</Link>
+      </Box>
+      <Box bg="blue.400" p={2}>
+        <Link to="/manage-carpark" style={styles}>Manage Car Park Building</Link>
       </Box>
       <Box bg="blue.400" p={2} display={permission ? "none" : ""}>
       <Link to="/manage-user" style={styles}>Manage User</Link>
