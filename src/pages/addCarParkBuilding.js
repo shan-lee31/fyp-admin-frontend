@@ -36,7 +36,7 @@ const AddCarPark = () => {
         toast.error("Please enter value for capacity.")
       } 
       else{
-        await axios.post("http://localhost:8000/addBuilding",{
+        await axios.post("http://localhost:3500/addBuilding",{
           addForm
         })
         .then(res=>{

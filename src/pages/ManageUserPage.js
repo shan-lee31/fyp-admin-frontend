@@ -43,7 +43,7 @@ const ManageUserPage = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:8000/manageuser");
+      const response = await fetch("http://localhost:3500/manageuser");
       const data = await response.json();
       setUsers(data);
       //   itemCount = data.length;
@@ -56,7 +56,7 @@ const ManageUserPage = () => {
     console.log(recordId);
     try {
       await axios
-        .delete(`http://localhost:8000/deleteUserInfo/${recordId}`)
+        .delete(`http://localhost:3500/deleteUserInfo/${recordId}`)
         .then((res) => {
           if (res.data.message === "Record deleted successfully") {
             console.log("can delete");

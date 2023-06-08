@@ -41,7 +41,7 @@ const AddAdmin = () => {
         toast.error("Password must have more than 6 characters.")
       } 
       else{
-        await axios.post("http://localhost:8000/sign-up",{
+        await axios.post("http://localhost:3500/sign-up",{
           form
         })
         .then(res=>{

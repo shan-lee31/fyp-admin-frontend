@@ -30,7 +30,7 @@ const SignUp = () => {
       //   toast.error("Fill the captcha!")
       // }
       else{
-        await axios.post("http://localhost:8000/sign-up",{
+        await axios.post("http://localhost:3500/sign-up",{
           form
         })
         .then(res=>{

@@ -80,7 +80,7 @@ const ManageCarParkPage = () => {
   const handleEditInfo = async (e) => {
     try {
       await axios
-        .post("http://localhost:8000/updateCarParkInfo", {
+        .post("http://localhost:3500/updateCarParkInfo", {
           updateInfo,
         })
         .then((res) => {
@@ -103,7 +103,7 @@ const ManageCarParkPage = () => {
     console.log(recordId);
     try {
       await axios
-        .delete(`http://localhost:8000/deleteCarParkInfo/${recordId}`)
+        .delete(`http://localhost:3500/deleteCarParkInfo/${recordId}`)
         .then((res) => {
           if (res.data.message === "Record deleted successfully") {
             console.log("can delete");
@@ -123,7 +123,7 @@ const ManageCarParkPage = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/carparkbuilding")
+      .get("http://localhost:3500/carparkbuilding")
       .then((response) => {
         setBuildings(response.data);
       })
