@@ -28,7 +28,7 @@ const ManageCarParkPage = () => {
   const [buildings, setBuildings] = useState([]);
   const [isHover, setHover] = useState(false);
 
-  const titles = ["No", "Name", "Google Plus Code","Capacity","Actions"];
+  const titles = ["No", "Name", "Google Plus Code", "Capacity", "Actions"];
 
   const styles = {
     top: {
@@ -57,7 +57,7 @@ const ManageCarParkPage = () => {
     name: "",
     _id: "",
     capacity: "",
-    googlePlusCode :""
+    googlePlusCode: "",
   });
 
   const openEditModal = (placement, buildingItem) => {
@@ -171,7 +171,12 @@ const ManageCarParkPage = () => {
                   <Text color="white" justifyContent="space-between" flex={1}>
                     {index + 1}
                   </Text>
-                  <Text color="white" justifyContent="space-between" flex={1} p={1}>
+                  <Text
+                    color="white"
+                    justifyContent="space-between"
+                    flex={1}
+                    p={1}
+                  >
                     {building.name}
                   </Text>
                   <Text color="white" justifyContent="space-between" flex={1}>
@@ -194,6 +199,7 @@ const ManageCarParkPage = () => {
                     </Link>
                     <Text color="white"> | </Text>
                     <Link
+                      style={{ cursor: "pointer" }}
                       onPress={() => openDeleteModal("center", building)}
                       _text={{
                         color: "red.300",
@@ -239,15 +245,24 @@ const ManageCarParkPage = () => {
                     <FormControl.Label>Name</FormControl.Label>
                     <Input
                       value={updateInfo.name || buildingItem.name}
-                      onChangeText={(value) => setUpdateInfo({ ...buildingItem, name: value })}
+                      onChangeText={(value) =>
+                        setUpdateInfo({ ...buildingItem, name: value })
+                      }
                     />
                   </FormControl>
-                  <FormControl mt="3" >
-                      <FormControl.Label>Google Plus Code</FormControl.Label>
-                      <Input isDisabled onChangeText={value => setUpdateInfo({...buildingItem, googlePlusCode:value})}
-                        value={buildingItem.googlePlusCode }
-                      />
-                    </FormControl>
+                  <FormControl mt="3">
+                    <FormControl.Label>Google Plus Code</FormControl.Label>
+                    <Input
+                      isDisabled
+                      onChangeText={(value) =>
+                        setUpdateInfo({
+                          ...buildingItem,
+                          googlePlusCode: value,
+                        })
+                      }
+                      value={buildingItem.googlePlusCode}
+                    />
+                  </FormControl>
                   <FormControl mt="3">
                     <FormControl.Label>Capacity</FormControl.Label>
                     <Input

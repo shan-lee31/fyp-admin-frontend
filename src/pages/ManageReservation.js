@@ -16,11 +16,160 @@ import {
   Pressable,
 } from "native-base";
 import AppBar from "../component/AppBar";
+import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleCheck,
+  faExclamationCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import LeftMenu from "../component/LeftMenu";
 import axios from "axios";
 
 const ManageReservation = () => {
- 
+  const [reservations, setReservations] = useState([]);
+  const [approvedReservations, setApprovedReservations] = useState([]);
+  const [rejectedReservations, setRejectedReservations] = useState([]);
+  const [placement, setPlacement] = useState(undefined);
+  const [selectedReservation, setSelectedReservation] = useState({
+    user_id: "",
+    name: "",
+    reservedAt: "",
+    lotName: "",
+  });
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3500/retrieveReservation")
+      .then((response) => {
+        setReservations(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
+  console.log("reserve", reservations);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3500/retrieveApprovedReservation")
+      .then((response) => {
+        setApprovedReservations(response.data);
+        console.log("res", response);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3500/retrieveRejectedReservation")
+      .then((response) => {
+        setRejectedReservations(response.data);
+        console.log("res", response);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
+
+  const styles = {
+    top: {
+      marginBottom: "auto",
+      marginTop: 0,
+    },
+    bottom: {
+      marginBottom: 0,
+      marginTop: "auto",
+    },
+    left: {
+      marginLeft: 0,
+      marginRight: "auto",
+    },
+    right: {
+      marginLeft: "auto",
+      marginRight: 0,
+    },
+    center: {},
+  };
+
+  const handleApproval = async () => {
+    console.log(selectedReservation);
+    try {
+      await axios
+        .post("http://localhost:3500/approveReservation", {
+          selectedReservation,
+        })
+        .then((response) => {
+          console.log(response);
+          if (response.data.message == "success") {
+            setOpen(false);
+            toast.success("A reservation is approved");
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          } else {
+            setOpen(false);
+            toast.error("Something is wrong");
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      await axios
+        .post("http://localhost:3500/rejectReservation", {
+          selectedReservation,
+        })
+        .then((response) => {
+          console.log(response);
+          if (response.data.message == "rejected") {
+            setOpen2(false);
+            toast.info("A reservation is rejected!");
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          } else {
+            setOpen(false);
+            toast.error("Something is wrong");
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const openApproveModal = (placement, reservation) => {
+    setOpen(true);
+    setPlacement(placement);
+    setSelectedReservation({
+      user_id: reservation.user_id,
+      name: reservation.user,
+      reservedAt: reservation.reservedAt,
+      lotName: reservation.parkingLotName,
+    });
+  };
+
+  const openRejectModal = (placement, reservation) => {
+    setOpen2(true);
+    setPlacement(placement);
+    setSelectedReservation({
+      name: reservation.user,
+      reservedAt: reservation.reservedAt,
+      lotName: reservation.parkingLotName,
+    });
+  };
 
   return (
     <Center w="100%" backgroundColor="#003572">
@@ -38,7 +187,246 @@ const ManageReservation = () => {
           <LeftMenu />
         </Box>
         <Box flex={1} p="6" minHeight="500px">
-         <Text>Reservation</Text>
+          {reservations != "" ? (
+            <Text color="white" fontWeight={"bold"} fontSize={20}>
+              Reservation Requests
+            </Text>
+          ) : (
+            <Text color="white" fontWeight={"bold"} fontSize={20}>
+              Reservation Requests (0)
+            </Text>
+          )}
+          <VStack divider={<Divider />} borderColor="white" space={3}>
+            {/* <HStack alignContent="left">
+              {titles.map((title, index) => (
+                <Text
+                  key={index}
+                  color="white"
+                  flexWrap="wrap"
+                  justifyContent="space-between"
+                  flex={1}
+                >
+                  {title}
+                </Text>
+              ))}
+            </HStack> */}
+            <VStack divider={<Divider />} space={3} mt={4}>
+              {reservations.map((reservation, index) => (
+                <HStack key={reservation._id}>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {index + 1}
+                  </Text>
+                  <Text
+                    color="white"
+                    justifyContent="space-between"
+                    flex={1}
+                    p={1}
+                  >
+                    {reservation.user}
+                  </Text>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {reservation.parkingLotName}
+                  </Text>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {reservation.reservedAt}
+                  </Text>
+                  <Text
+                    color="white"
+                    justifyContent="space-between"
+                    flex={1}
+                    textTransform="uppercase"
+                  >
+                    {reservation.approvalStatus}
+                  </Text>
+                  <HStack justifyContent="space-between" flex={1}>
+                    <Link
+                      style={{ cursor: "pointer" }}
+                      onPress={() => openApproveModal("center", reservation)}
+                      _text={{
+                        color: "#F79520",
+                        fontWeight: "medium",
+                        fontSize: "sm",
+                      }}
+                    >
+                      Approve
+                    </Link>
+                    <Text color="white"> | </Text>
+                    <Link
+                      style={{ cursor: "pointer" }}
+                      onPress={() => openRejectModal("center", reservation)}
+                      _text={{
+                        color: "red.300",
+                        fontWeight: "medium",
+                        fontSize: "sm",
+                      }}
+                    >
+                      Reject
+                    </Link>
+                  </HStack>
+                </HStack>
+              ))}
+            </VStack>
+          </VStack>
+          {approvedReservations != "" ? (
+            <Text color="white" fontWeight={"bold"} fontSize={20}>
+              Approved Requests
+            </Text>
+          ) : (
+            <Text color="white" fontWeight={"bold"} fontSize={20}>
+              Approved Requests (0)
+            </Text>
+          )}
+          <VStack divider={<Divider />} borderColor="white" space={3}>
+            <VStack divider={<Divider />} space={3} mt={4}>
+              {approvedReservations.map((approvedReservations, index) => (
+                <HStack key={approvedReservations._id}>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {index + 1}
+                  </Text>
+                  <Text
+                    color="white"
+                    justifyContent="space-between"
+                    flex={1}
+                    p={1}
+                  >
+                    {approvedReservations.user}
+                  </Text>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {approvedReservations.parkingLotName}
+                  </Text>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {approvedReservations.reservedAt}
+                  </Text>
+                </HStack>
+              ))}
+            </VStack>
+          </VStack>
+
+          {rejectedReservations != "" ? (
+            <Text color="white" fontWeight={"bold"} fontSize={20}>
+              Rejected Requests
+            </Text>
+          ) : (
+            <Text color="white" fontWeight={"bold"} fontSize={20}>
+              Rejected Requests (0)
+            </Text>
+          )}
+          <VStack divider={<Divider />} borderColor="white" space={3}>
+            <VStack divider={<Divider />} space={3} mt={4}>
+              {rejectedReservations.map((rejectedReservations, index) => (
+                <HStack key={rejectedReservations._id}>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {index + 1}
+                  </Text>
+                  <Text
+                    color="white"
+                    justifyContent="space-between"
+                    flex={1}
+                    p={1}
+                  >
+                    {rejectedReservations.user}
+                  </Text>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {rejectedReservations.parkingLotName}
+                  </Text>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {rejectedReservations.reservedAt}
+                  </Text>
+                </HStack>
+              ))}
+            </VStack>
+          </VStack>
+
+          <Modal
+            isOpen={open}
+            onClose={() => setOpen(false)}
+            safeAreaTop={true}
+          >
+            <Modal.Content maxWidth="350" {...styles[placement]}>
+              <Modal.CloseButton />
+              <Modal.Header>
+                <HStack alignItems={"center"}>
+                  <FontAwesomeIcon icon={faCircleCheck} color="green" />
+                  <Text mr={3}>{""}</Text>
+                  Confirm Approval
+                </HStack>
+              </Modal.Header>
+              <Modal.Body>
+                <Box>
+                  <Text>
+                    Reservation request from : {selectedReservation.name}
+                  </Text>
+                  <Text>
+                    Reservation request at : {selectedReservation.reservedAt}
+                  </Text>
+                  <Text>
+                    Reservation request for : {selectedReservation.lotName}
+                  </Text>
+                </Box>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button.Group space={2}>
+                  <Button
+                    variant="ghost"
+                    colorScheme="blueGray"
+                    onPress={() => {
+                      setOpen(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button colorScheme="green" onPress={handleApproval}>
+                    Approve
+                  </Button>
+                </Button.Group>
+              </Modal.Footer>
+            </Modal.Content>
+          </Modal>
+          <Modal
+            isOpen={open2}
+            onClose={() => setOpen2(false)}
+            safeAreaTop={true}
+          >
+            <Modal.Content maxWidth="350" {...styles[placement]}>
+              <Modal.CloseButton />
+              <Modal.Header>
+                <HStack alignItems={"center"}>
+                  <FontAwesomeIcon icon={faExclamationCircle} color="red" />
+                  <Text mr={3}>{""}</Text>
+                  Reject Request
+                </HStack>
+              </Modal.Header>
+              <Modal.Body>
+                <Box>
+                  <Text>
+                    Reservation request from : {selectedReservation.name}
+                  </Text>
+                  <Text>
+                    Reservation request at : {selectedReservation.reservedAt}
+                  </Text>
+                  <Text>
+                    Reservation request for : {selectedReservation.lotName}
+                  </Text>
+                </Box>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button.Group space={2}>
+                  <Button
+                    variant="ghost"
+                    colorScheme="blueGray"
+                    onPress={() => {
+                      setOpen2(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button colorScheme="red" onPress={handleReject}>
+                    Reject
+                  </Button>
+                </Button.Group>
+              </Modal.Footer>
+            </Modal.Content>
+          </Modal>
         </Box>
       </Flex>
     </Center>
