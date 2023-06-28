@@ -78,7 +78,7 @@ const Home = () => {
               </VStack>
               <VStack justifyContent={"center"} flex={1}>
                 <Text fontSize={60}>{users}</Text>
-                <Text fontSize={20}>Users {""}</Text>
+                <Text fontSize={20}>Registered Users</Text>
               </VStack>
             </HStack>
             <HStack

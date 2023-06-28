@@ -29,15 +29,20 @@ const ManageReservation = () => {
   const [reservations, setReservations] = useState([]);
   const [approvedReservations, setApprovedReservations] = useState([]);
   const [rejectedReservations, setRejectedReservations] = useState([]);
+  const [cancelledReservation, setCancelledReservations] = useState([]);
+  const [isError, setIsError] = useState({});
+  const [open, setOpen] = useState(false);
+  const [open2, setOpen2] = useState(false);
   const [placement, setPlacement] = useState(undefined);
+  const [rejectForm, setRejectForm] = useState({
+    reason: "",
+  });
   const [selectedReservation, setSelectedReservation] = useState({
     user_id: "",
     name: "",
     reservedAt: "",
     lotName: "",
   });
-  const [open, setOpen] = useState(false);
-  const [open2, setOpen2] = useState(false);
 
   useEffect(() => {
     axios
@@ -50,6 +55,18 @@ const ManageReservation = () => {
       });
   }, []);
   console.log("reserve", reservations);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3500/retrieveCancelledReservation")
+      .then((response) => {
+        setCancelledReservations(response.data);
+        console.log("res", response);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
 
   useEffect(() => {
     axios
@@ -124,10 +141,14 @@ const ManageReservation = () => {
   };
 
   const handleReject = async () => {
+    if (rejectForm.reason.length <= 0) {
+      setIsError({ ...isError, name: "Enter reason." });
+    }
     try {
       await axios
         .post("http://localhost:3500/rejectReservation", {
           selectedReservation,
+          rejectForm,
         })
         .then((response) => {
           console.log(response);
@@ -187,15 +208,10 @@ const ManageReservation = () => {
           <LeftMenu />
         </Box>
         <Box flex={1} p="6" minHeight="500px">
-          {reservations != "" ? (
-            <Text color="white" fontWeight={"bold"} fontSize={20}>
-              Reservation Requests
-            </Text>
-          ) : (
-            <Text color="white" fontWeight={"bold"} fontSize={20}>
-              Reservation Requests (0)
-            </Text>
-          )}
+          <Text color="white" fontWeight={"bold"} fontSize={20}>
+            Pending Reservation Requests ({reservations.length})
+          </Text>
+
           <VStack divider={<Divider />} borderColor="white" space={3}>
             {/* <HStack alignContent="left">
               {titles.map((title, index) => (
@@ -267,15 +283,11 @@ const ManageReservation = () => {
               ))}
             </VStack>
           </VStack>
-          {approvedReservations != "" ? (
-            <Text color="white" fontWeight={"bold"} fontSize={20}>
-              Approved Requests
-            </Text>
-          ) : (
-            <Text color="white" fontWeight={"bold"} fontSize={20}>
-              Approved Requests (0)
-            </Text>
-          )}
+
+          <Text color="white" fontWeight={"bold"} fontSize={20}>
+            Approved Requests ({approvedReservations.length})
+          </Text>
+
           <VStack divider={<Divider />} borderColor="white" space={3}>
             <VStack divider={<Divider />} space={3} mt={4}>
               {approvedReservations.map((approvedReservations, index) => (
@@ -302,19 +314,14 @@ const ManageReservation = () => {
             </VStack>
           </VStack>
 
-          {rejectedReservations != "" ? (
-            <Text color="white" fontWeight={"bold"} fontSize={20}>
-              Rejected Requests
-            </Text>
-          ) : (
-            <Text color="white" fontWeight={"bold"} fontSize={20}>
-              Rejected Requests (0)
-            </Text>
-          )}
+          <Text color="white" fontWeight={"bold"} fontSize={20}>
+            Rejected Requests ({rejectedReservations.length})
+          </Text>
+
           <VStack divider={<Divider />} borderColor="white" space={3}>
             <VStack divider={<Divider />} space={3} mt={4}>
               {rejectedReservations.map((rejectedReservations, index) => (
-                <HStack key={rejectedReservations._id}>
+                <HStack key={rejectedReservations._id} alignItems={"center"}>
                   <Text color="white" justifyContent="space-between" flex={1}>
                     {index + 1}
                   </Text>
@@ -329,13 +336,21 @@ const ManageReservation = () => {
                   <Text color="white" justifyContent="space-between" flex={1}>
                     {rejectedReservations.parkingLotName}
                   </Text>
-                  <Text color="white" justifyContent="space-between" flex={1}>
-                    {rejectedReservations.reservedAt}
-                  </Text>
+                  <HStack justifyContent="space-between" minWidth={200}>
+                    <Text color="white" fontWeight={"bold"}>
+                      Reason:{" "}
+                    </Text>
+                    <Text color="white">
+                      {rejectedReservations.rejectReason}
+                    </Text>
+                  </HStack>
                 </HStack>
               ))}
             </VStack>
           </VStack>
+          <Text color="white" fontWeight={"bold"} fontSize={20}>
+            Cancelled Requests ({cancelledReservation.length})
+          </Text>
 
           <Modal
             isOpen={open}
@@ -407,6 +422,25 @@ const ManageReservation = () => {
                   <Text>
                     Reservation request for : {selectedReservation.lotName}
                   </Text>
+                  <FormControl isInvalid={"name" in isError}>
+                    <Text mt={2} color={"red.500"}>
+                      Reason
+                    </Text>
+                    <Input
+                      onChangeText={(value) =>
+                        setRejectForm({ ...rejectForm, reason: value })
+                      }
+                    />
+                    {"name" in isError ? (
+                      <FormControl.ErrorMessage>
+                        {isError.name}
+                      </FormControl.ErrorMessage>
+                    ) : (
+                      <FormControl.HelperText>
+                        Please enter reason.
+                      </FormControl.HelperText>
+                    )}
+                  </FormControl>
                 </Box>
               </Modal.Body>
               <Modal.Footer>
