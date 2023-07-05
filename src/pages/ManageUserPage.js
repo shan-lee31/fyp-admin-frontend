@@ -18,7 +18,7 @@ import {
 import AppBar from "../component/AppBar";
 import LeftMenu from "../component/LeftMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAdd,faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { faAdd, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import axios from "axios";
 
@@ -39,7 +39,7 @@ const ManageUserPage = () => {
     setOpen(true);
     setPlacement(placement);
     setAdminInfo(adminInfo);
-  }
+  };
 
   const fetchData = async () => {
     try {
@@ -99,7 +99,7 @@ const ManageUserPage = () => {
   };
 
   return (
-    <Center w="100%" backgroundColor="#003572">
+    <Center w="100%">
       <AppBar />
       <Flex
         direction="row"

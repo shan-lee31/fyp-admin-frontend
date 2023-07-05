@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import emailjs from "@emailjs/browser";
 import {
   Box,
   Text,
@@ -30,6 +31,7 @@ const ManageReservation = () => {
   const [approvedReservations, setApprovedReservations] = useState([]);
   const [rejectedReservations, setRejectedReservations] = useState([]);
   const [cancelledReservation, setCancelledReservations] = useState([]);
+  const [overdueReservation, setOverdueReservations] = useState([]);
   const [isError, setIsError] = useState({});
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
@@ -39,6 +41,7 @@ const ManageReservation = () => {
   });
   const [selectedReservation, setSelectedReservation] = useState({
     user_id: "",
+    email: "",
     name: "",
     reservedAt: "",
     lotName: "",
@@ -49,12 +52,25 @@ const ManageReservation = () => {
       .get("http://localhost:3500/retrieveReservation")
       .then((response) => {
         setReservations(response.data);
+        console.log(response.data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
   }, []);
   console.log("reserve", reservations);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3500/retrieveOverdueReservation")
+      .then((response) => {
+        setOverdueReservations(response.data);
+        console.log("res", response);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
 
   useEffect(() => {
     axios
@@ -124,6 +140,25 @@ const ManageReservation = () => {
           if (response.data.message == "success") {
             setOpen(false);
             toast.success("A reservation is approved");
+            emailjs
+              .send(
+                "service_xjy1zon",
+                "template_2fn595c",
+                {
+                  message: selectedReservation.lotName,
+                  to_name: selectedReservation.name,
+                  to_email: selectedReservation.email,
+                },
+                "9cyFZLyhCSuXc8DuF"
+              )
+              .then(
+                (result) => {
+                  console.log(result.text);
+                },
+                (error) => {
+                  console.log(error.text);
+                }
+              );
             setTimeout(() => {
               window.location.reload();
             }, 2000);
@@ -139,7 +174,28 @@ const ManageReservation = () => {
       console.log(error);
     }
   };
-
+  const sendRejectEmail = (sR, rF) => {
+    console.log("called");
+    emailjs
+      .send(
+        "service_xjy1zon",
+        "template_964hc3j",
+        {
+          to_name: sR.name,
+          message: rF.reason,
+          to_email: sR.email,
+        },
+        "9cyFZLyhCSuXc8DuF"
+      )
+      .then(
+        function (response) {
+          console.log("SUCCESS!", response.status, response.text);
+        },
+        function (error) {
+          console.log("FAILED...", error);
+        }
+      );
+  };
   const handleReject = async () => {
     if (rejectForm.reason.length <= 0) {
       setIsError({ ...isError, name: "Enter reason." });
@@ -155,6 +211,7 @@ const ManageReservation = () => {
           if (response.data.message == "rejected") {
             setOpen2(false);
             toast.info("A reservation is rejected!");
+            sendRejectEmail(selectedReservation, rejectForm);
             setTimeout(() => {
               window.location.reload();
             }, 1000);
@@ -177,6 +234,7 @@ const ManageReservation = () => {
     setSelectedReservation({
       user_id: reservation.user_id,
       name: reservation.user,
+      email: reservation.user_email,
       reservedAt: reservation.reservedAt,
       lotName: reservation.parkingLotName,
     });
@@ -187,13 +245,14 @@ const ManageReservation = () => {
     setPlacement(placement);
     setSelectedReservation({
       name: reservation.user,
+      email: reservation.user_email,
       reservedAt: reservation.reservedAt,
       lotName: reservation.parkingLotName,
     });
   };
 
   return (
-    <Center w="100%" backgroundColor="#003572">
+    <Center w="100%">
       <AppBar />
       <Flex
         direction="row"
@@ -212,7 +271,7 @@ const ManageReservation = () => {
             Pending Reservation Requests ({reservations.length})
           </Text>
 
-          <VStack divider={<Divider />} borderColor="white" space={3}>
+          <VStack divider={<Divider />} borderColor="white" space={3} mb={2}>
             {/* <HStack alignContent="left">
               {titles.map((title, index) => (
                 <Text
@@ -229,7 +288,11 @@ const ManageReservation = () => {
             <VStack divider={<Divider />} space={3} mt={4}>
               {reservations.map((reservation, index) => (
                 <HStack key={reservation._id}>
-                  <Text color="white" justifyContent="space-between" flex={1}>
+                  <Text
+                    color="white"
+                    justifyContent="space-between"
+                    minWidth={100}
+                  >
                     {index + 1}
                   </Text>
                   <Text
@@ -288,26 +351,35 @@ const ManageReservation = () => {
             Approved Requests ({approvedReservations.length})
           </Text>
 
-          <VStack divider={<Divider />} borderColor="white" space={3}>
+          <VStack divider={<Divider />} borderColor="white" space={3} mb={2}>
             <VStack divider={<Divider />} space={3} mt={4}>
               {approvedReservations.map((approvedReservations, index) => (
                 <HStack key={approvedReservations._id}>
-                  <Text color="white" justifyContent="space-between" flex={1}>
+                  <Text
+                    color="white"
+                    justifyContent="space-between"
+                    minWidth={100}
+                  >
                     {index + 1}
                   </Text>
                   <Text
                     color="white"
                     justifyContent="space-between"
+                    minWidth={200}
                     flex={1}
-                    p={1}
                   >
+                    {approvedReservations.reservedAt}
+                  </Text>
+                  <Text color="white" minWidth={200} flex={1}>
                     {approvedReservations.user}
                   </Text>
-                  <Text color="white" justifyContent="space-between" flex={1}>
+                  <Text
+                    color="white"
+                    justifyContent="space-between"
+                    minWidth={200}
+                    flex={1}
+                  >
                     {approvedReservations.parkingLotName}
-                  </Text>
-                  <Text color="white" justifyContent="space-between" flex={1}>
-                    {approvedReservations.reservedAt}
                   </Text>
                 </HStack>
               ))}
@@ -318,19 +390,18 @@ const ManageReservation = () => {
             Rejected Requests ({rejectedReservations.length})
           </Text>
 
-          <VStack divider={<Divider />} borderColor="white" space={3}>
+          <VStack divider={<Divider />} borderColor="white" space={3} mb={2}>
             <VStack divider={<Divider />} space={3} mt={4}>
               {rejectedReservations.map((rejectedReservations, index) => (
                 <HStack key={rejectedReservations._id} alignItems={"center"}>
-                  <Text color="white" justifyContent="space-between" flex={1}>
-                    {index + 1}
-                  </Text>
                   <Text
                     color="white"
                     justifyContent="space-between"
-                    flex={1}
-                    p={1}
+                    minWidth={100}
                   >
+                    {index + 1}
+                  </Text>
+                  <Text color="white" minWidth={200}>
                     {rejectedReservations.user}
                   </Text>
                   <Text color="white" justifyContent="space-between" flex={1}>
@@ -348,8 +419,13 @@ const ManageReservation = () => {
               ))}
             </VStack>
           </VStack>
-          <Text color="white" fontWeight={"bold"} fontSize={20}>
+
+          <Text color="white" fontWeight={"bold"} fontSize={20} mb={4}>
             Cancelled Requests ({cancelledReservation.length})
+          </Text>
+
+          <Text color="white" fontWeight={"bold"} fontSize={20} mb={4}>
+            Overdue Requests ({overdueReservation.length})
           </Text>
 
           <Modal

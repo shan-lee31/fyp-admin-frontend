@@ -135,7 +135,7 @@ const ManageCarParkPage = () => {
   console.log(buildings);
 
   return (
-    <Center w="100%" backgroundColor="#003572">
+    <Center w="100%">
       <AppBar />
       <Flex
         direction="row"

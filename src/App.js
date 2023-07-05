@@ -14,12 +14,12 @@ import ManageReservation from "./pages/ManageReservation";
 
 const App = () => {
   return (
-    <div className="App" style={{backgroundColor:"#003572", height:"100%"}}>
+    <div className="App" style={{ backgroundColor: "#003572", height: "100%" }}>
       <ToastContainer />
       <BrowserRouter>
         <Routes>
           <Route path="/" exact element={<LogIn />} />
-          <Route path="/sign-up" element={<SignUp/>} />
+          <Route path="/sign-up" element={<SignUp />} />
           <Route
             path="/home"
             element={
@@ -37,7 +37,7 @@ const App = () => {
               </Protected>
             }
           />
-           <Route
+          <Route
             path="/manage-user/add"
             exact
             element={
@@ -54,7 +54,7 @@ const App = () => {
               </Protected>
             }
           />
-              <Route
+          <Route
             path="/manage-reservation"
             element={
               <Protected isAuthenticated>
@@ -62,7 +62,7 @@ const App = () => {
               </Protected>
             }
           />
-           <Route
+          <Route
             path="/manage-carpark/add"
             element={
               <Protected isAuthenticated>
