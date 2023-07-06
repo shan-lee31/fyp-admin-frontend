@@ -140,25 +140,25 @@ const ManageReservation = () => {
           if (response.data.message == "success") {
             setOpen(false);
             toast.success("A reservation is approved");
-            emailjs
-              .send(
-                "service_xjy1zon",
-                "template_2fn595c",
-                {
-                  message: selectedReservation.lotName,
-                  to_name: selectedReservation.name,
-                  to_email: selectedReservation.email,
-                },
-                "9cyFZLyhCSuXc8DuF"
-              )
-              .then(
-                (result) => {
-                  console.log(result.text);
-                },
-                (error) => {
-                  console.log(error.text);
-                }
-              );
+            // emailjs
+            //   .send(
+            //     "service_xjy1zon",
+            //     "template_2fn595c",
+            //     {
+            //       message: selectedReservation.lotName,
+            //       to_name: selectedReservation.name,
+            //       to_email: selectedReservation.email,
+            //     },
+            //     "9cyFZLyhCSuXc8DuF"
+            //   )
+            //   .then(
+            //     (result) => {
+            //       console.log(result.text);
+            //     },
+            //     (error) => {
+            //       console.log(error.text);
+            //     }
+            //   );
             setTimeout(() => {
               window.location.reload();
             }, 2000);
@@ -176,55 +176,56 @@ const ManageReservation = () => {
   };
   const sendRejectEmail = (sR, rF) => {
     console.log("called");
-    emailjs
-      .send(
-        "service_xjy1zon",
-        "template_964hc3j",
-        {
-          to_name: sR.name,
-          message: rF.reason,
-          to_email: sR.email,
-        },
-        "9cyFZLyhCSuXc8DuF"
-      )
-      .then(
-        function (response) {
-          console.log("SUCCESS!", response.status, response.text);
-        },
-        function (error) {
-          console.log("FAILED...", error);
-        }
-      );
+    // emailjs
+    //   .send(
+    //     "service_xjy1zon",
+    //     "template_964hc3j",
+    //     {
+    //       to_name: sR.name,
+    //       message: rF.reason,
+    //       to_email: sR.email,
+    //     },
+    //     "9cyFZLyhCSuXc8DuF"
+    //   )
+    //   .then(
+    //     function (response) {
+    //       console.log("SUCCESS!", response.status, response.text);
+    //     },
+    //     function (error) {
+    //       console.log("FAILED...", error);
+    //     }
+    //   );
   };
   const handleReject = async () => {
     if (rejectForm.reason.length <= 0) {
       setIsError({ ...isError, name: "Enter reason." });
-    }
-    try {
-      await axios
-        .post("http://localhost:3500/rejectReservation", {
-          selectedReservation,
-          rejectForm,
-        })
-        .then((response) => {
-          console.log(response);
-          if (response.data.message == "rejected") {
-            setOpen2(false);
-            toast.info("A reservation is rejected!");
-            sendRejectEmail(selectedReservation, rejectForm);
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
-          } else {
-            setOpen(false);
-            toast.error("Something is wrong");
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
-          }
-        });
-    } catch (error) {
-      console.log(error);
+    } else {
+      try {
+        await axios
+          .post("http://localhost:3500/rejectReservation", {
+            selectedReservation,
+            rejectForm,
+          })
+          .then((response) => {
+            console.log(response);
+            if (response.data.message == "rejected") {
+              setOpen2(false);
+              toast.info("A reservation is rejected!");
+              sendRejectEmail(selectedReservation, rejectForm);
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            } else {
+              setOpen(false);
+              toast.error("Something is wrong");
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            }
+          });
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -295,15 +296,14 @@ const ManageReservation = () => {
                   >
                     {index + 1}
                   </Text>
+                  <Text color="white" justifyContent="space-between" flex={1}>
+                    {reservation.user}
+                  </Text>
                   <Text
                     color="white"
                     justifyContent="space-between"
-                    flex={1}
-                    p={1}
+                    minWidth={100}
                   >
-                    {reservation.user}
-                  </Text>
-                  <Text color="white" justifyContent="space-between" flex={1}>
                     {reservation.parkingLotName}
                   </Text>
                   <Text color="white" justifyContent="space-between" flex={1}>
@@ -397,7 +397,7 @@ const ManageReservation = () => {
                   <Text
                     color="white"
                     justifyContent="space-between"
-                    minWidth={100}
+                    minWidth={50}
                   >
                     {index + 1}
                   </Text>

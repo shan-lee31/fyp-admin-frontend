@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import AppBar from "../component/AppBar";
 import LeftMenu from "../component/LeftMenu";
-import img from "../assets/logo.png";
+import request from "../assets/request.png";
+import reservedLot from "../assets/reservedLot.png";
+import usersImg from "../assets/users.png";
 import {
   Box,
   Text,
@@ -67,12 +69,13 @@ const Home = () => {
               borderWidth={1}
               minHeight={200}
               borderRadius={10}
+              p={2}
             >
               <VStack justifyContent={"center"} flex={1}>
                 <Image
-                  source={{ uri: img }}
+                  source={{ uri: usersImg }}
                   width="100"
-                  height="50"
+                  height="100"
                   alt="logo"
                 ></Image>
               </VStack>
@@ -87,12 +90,13 @@ const Home = () => {
               borderWidth={1}
               minHeight={200}
               borderRadius={10}
+              p={2}
             >
               <VStack justifyContent={"center"} flex={1}>
                 <Image
-                  source={{ uri: img }}
+                  source={{ uri: reservedLot }}
                   width="100"
-                  height="50"
+                  height="100"
                   alt="logo"
                 ></Image>
               </VStack>
@@ -107,12 +111,13 @@ const Home = () => {
               borderWidth={1}
               minHeight={200}
               borderRadius={10}
+              p={2}
             >
               <VStack justifyContent={"center"} flex={1}>
                 <Image
-                  source={{ uri: img }}
+                  source={{ uri: request }}
                   width="100"
-                  height="50"
+                  height="100"
                   alt="logo"
                 ></Image>
               </VStack>

@@ -14,7 +14,10 @@ import ManageReservation from "./pages/ManageReservation";
 
 const App = () => {
   return (
-    <div className="App" style={{ backgroundColor: "#003572", height: "100%" }}>
+    <div
+      className="App"
+      style={{ backgroundColor: "#003572", minHeight: "100vh" }}
+    >
       <ToastContainer />
       <BrowserRouter>
         <Routes>
