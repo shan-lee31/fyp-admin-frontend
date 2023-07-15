@@ -259,7 +259,7 @@ const ManageUserPage = () => {
                   >
                     Cancel
                   </Button>
-                  <Text> {adminInfo._id} </Text>
+                  {/* <Text> {adminInfo._id} </Text> */}
                   <Button onPress={() => handleDeleteInfo(adminInfo._id)}>
                     Delete
                   </Button>

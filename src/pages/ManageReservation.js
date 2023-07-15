@@ -47,6 +47,8 @@ const ManageReservation = () => {
     lotName: "",
   });
 
+  const titles = ["No", "User", "Parking Lot", "Time", "Status", "Action"];
+
   useEffect(() => {
     axios
       .get("http://localhost:3500/retrieveReservation")
@@ -140,25 +142,25 @@ const ManageReservation = () => {
           if (response.data.message == "success") {
             setOpen(false);
             toast.success("A reservation is approved");
-            // emailjs
-            //   .send(
-            //     "service_xjy1zon",
-            //     "template_2fn595c",
-            //     {
-            //       message: selectedReservation.lotName,
-            //       to_name: selectedReservation.name,
-            //       to_email: selectedReservation.email,
-            //     },
-            //     "9cyFZLyhCSuXc8DuF"
-            //   )
-            //   .then(
-            //     (result) => {
-            //       console.log(result.text);
-            //     },
-            //     (error) => {
-            //       console.log(error.text);
-            //     }
-            //   );
+            emailjs
+              .send(
+                "service_xjy1zon",
+                "template_2fn595c",
+                {
+                  message: selectedReservation.lotName,
+                  to_name: selectedReservation.name,
+                  to_email: selectedReservation.email,
+                },
+                "9cyFZLyhCSuXc8DuF"
+              )
+              .then(
+                (result) => {
+                  console.log(result.text);
+                },
+                (error) => {
+                  console.log(error.text);
+                }
+              );
             setTimeout(() => {
               window.location.reload();
             }, 2000);
@@ -176,25 +178,25 @@ const ManageReservation = () => {
   };
   const sendRejectEmail = (sR, rF) => {
     console.log("called");
-    // emailjs
-    //   .send(
-    //     "service_xjy1zon",
-    //     "template_964hc3j",
-    //     {
-    //       to_name: sR.name,
-    //       message: rF.reason,
-    //       to_email: sR.email,
-    //     },
-    //     "9cyFZLyhCSuXc8DuF"
-    //   )
-    //   .then(
-    //     function (response) {
-    //       console.log("SUCCESS!", response.status, response.text);
-    //     },
-    //     function (error) {
-    //       console.log("FAILED...", error);
-    //     }
-    //   );
+    emailjs
+      .send(
+        "service_xjy1zon",
+        "template_964hc3j",
+        {
+          to_name: sR.name,
+          message: rF.reason,
+          to_email: sR.email,
+        },
+        "9cyFZLyhCSuXc8DuF"
+      )
+      .then(
+        function (response) {
+          console.log("SUCCESS!", response.status, response.text);
+        },
+        function (error) {
+          console.log("FAILED...", error);
+        }
+      );
   };
   const handleReject = async () => {
     if (rejectForm.reason.length <= 0) {
@@ -268,51 +270,63 @@ const ManageReservation = () => {
           <LeftMenu />
         </Box>
         <Box flex={1} p="6" minHeight="500px">
-          <Text color="white" fontWeight={"bold"} fontSize={20}>
+          <Text color="white" fontWeight={"bold"} fontSize={20} mb={4}>
             Pending Reservation Requests ({reservations.length})
           </Text>
 
           <VStack divider={<Divider />} borderColor="white" space={3} mb={2}>
-            {/* <HStack alignContent="left">
-              {titles.map((title, index) => (
-                <Text
-                  key={index}
-                  color="white"
-                  flexWrap="wrap"
-                  justifyContent="space-between"
-                  flex={1}
-                >
-                  {title}
-                </Text>
-              ))}
-            </HStack> */}
-            <VStack divider={<Divider />} space={3} mt={4}>
+            {reservations.length != 0 ? (
+              <HStack alignContent="left">
+                {titles.map((title, index) => (
+                  <Text
+                    key={index}
+                    color="white"
+                    justifyContent="space-between"
+                    flex={1}
+                    minWidth={200}
+                  >
+                    {title}
+                  </Text>
+                ))}
+              </HStack>
+            ) : (
+              <></>
+            )}
+            <VStack divider={<Divider />} space={3} mt={2}>
               {reservations.map((reservation, index) => (
                 <HStack key={reservation._id}>
                   <Text
                     color="white"
                     justifyContent="space-between"
-                    minWidth={100}
+                    minWidth={200}
                   >
                     {index + 1}
                   </Text>
-                  <Text color="white" justifyContent="space-between" flex={1}>
+                  <Text
+                    color="white"
+                    justifyContent="space-between"
+                    minWidth={200}
+                  >
                     {reservation.user}
                   </Text>
                   <Text
                     color="white"
                     justifyContent="space-between"
-                    minWidth={100}
+                    minWidth={200}
                   >
                     {reservation.parkingLotName}
                   </Text>
-                  <Text color="white" justifyContent="space-between" flex={1}>
+                  <Text
+                    color="white"
+                    justifyContent="space-between"
+                    minWidth={200}
+                  >
                     {reservation.reservedAt}
                   </Text>
                   <Text
                     color="white"
                     justifyContent="space-between"
-                    flex={1}
+                    minWidth={200}
                     textTransform="uppercase"
                   >
                     {reservation.approvalStatus}
@@ -386,7 +400,8 @@ const ManageReservation = () => {
             </VStack>
           </VStack>
 
-          <Text color="white" fontWeight={"bold"} fontSize={20}>
+          {/* Rejected Request */}
+          {/* <Text color="white" fontWeight={"bold"} fontSize={20}>
             Rejected Requests ({rejectedReservations.length})
           </Text>
 
@@ -418,15 +433,15 @@ const ManageReservation = () => {
                 </HStack>
               ))}
             </VStack>
-          </VStack>
-
-          <Text color="white" fontWeight={"bold"} fontSize={20} mb={4}>
+          </VStack> */}
+          {/* Cancelled Request */}
+          {/* <Text color="white" fontWeight={"bold"} fontSize={20} mb={4}>
             Cancelled Requests ({cancelledReservation.length})
-          </Text>
-
-          <Text color="white" fontWeight={"bold"} fontSize={20} mb={4}>
+          </Text> */}
+          {/* Overdue Request */}
+          {/* <Text color="white" fontWeight={"bold"} fontSize={20} mb={4}>
             Overdue Requests ({overdueReservation.length})
-          </Text>
+          </Text> */}
 
           <Modal
             isOpen={open}
